@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {RootStackParamList} from './types'
 import Home from './screens/Home'
 import Login from './screens/Login'
-
+import Registration from './screens/Registration'
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -14,6 +14,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName='Home'>
         <Stack.Screen name="Home" component={Home}/>
         <Stack.Screen name="Login" component={Login}/>
+        <Stack.Screen name="Registration" component={Registration}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

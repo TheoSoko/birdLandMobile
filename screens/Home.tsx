@@ -16,7 +16,7 @@ export default function Home({route, navigation}:HomeProps) {
               <Button outline={false} text='Se connecter' touchEvent={() => navigation.navigate('Login')}/>
             </View>
             <View style={styles.registerBloc}>
-              <Button outline={true} text="S'incrire" touchEvent={() => navigation.navigate('Login')}/>
+              <Button outline={true} text="S'incrire" touchEvent={() => navigation.navigate('Registration')}/>
             </View>
         </View>
     </View>
