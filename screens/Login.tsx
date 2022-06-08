@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {RootStackParamList} from '../types'
+import { AntDesign } from '@expo/vector-icons'; 
 import validator from 'validator';
+import Button from '../components/Button'
+import CustomInput from '../components/CustomInput'
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>
 
@@ -12,54 +15,57 @@ export default function Login({route, navigation}:LoginProps) {
     const [password, setPassword] = useState<string|undefined>()
     const [checkEmail, setCheckEmail] = useState<boolean|undefined>()
     const [checkPassword, setCheckpassword] = useState<boolean|undefined>()
+    const [hidePassword, setHidePassword] = useState<boolean>(true)
     
     const errorEmail = 'Veuillez rentrer un adresse mail valide'
-    const successEmail = 'C\'est bon pour l\'email'
-    const errorPassword = 'Veuilez rentrer un mot de passe valide'
-    const successPassword = 'C\'est bon pour le mot de passe'
+    const errorPassword = 'Le mot de passe doit contenir au moins 8 huit caractères, dont une lettre, une majuscule, un chiffre et un caractère spécial'
 
-    useEffect(() => {
-        if (email) {
-            if (validator.isEmail(email)){
-                setCheckEmail(true)
-            } else {
-                setCheckEmail(false)
+    function checkField(fieldName: string):void{
+        if (fieldName == 'email') {
+            if (email && email.length > 0) {
+                if (validator.isEmail(email)){
+                    setCheckEmail(true)
+                } else {
+                    setCheckEmail(false)
+                }
+            }
+        } else if (fieldName == 'password') {
+            if (password && password.length > 0) {
+                if (validator.isStrongPassword(password)){
+                    setCheckpassword(true)
+                } else {
+                    setCheckpassword(false)
+                }
             }
         }
-        if (password) {
-            if (validator.isStrongPassword(password)){
-                setCheckpassword(true)
-            } else {
-                setCheckpassword(false)
-            }
-        }
-      });
-
+    }
+    
     function displayEmailMessage(){
         let message
-        if (checkEmail === true) {
-            message = <View><Text style={{fontSize: 20, fontWeight: '600'}}>{successEmail}</Text></View>
-        }
-        if (checkEmail === false) {
-            message = <View><Text style={{fontSize: 20, fontWeight: '600', color:'red'}}>{errorEmail}</Text></View>
-        }
-        if (!checkEmail) {
+        if (checkEmail === undefined || (email !== undefined && email.length === 0)){
             message = null
+        } else if(checkEmail === false) {
+            message = <View><Text style={{fontSize: 20, fontWeight: '600', color:'#6d1111'}}>{errorEmail}</Text></View>
         }
         return message
     }
     function displayPasswordMessage(){
         let message
-        if (checkPassword === true) {
-            message = <View><Text style={{fontSize: 20, fontWeight: '600'}}>{successPassword}</Text></View>
-        }
-        if (checkPassword === false) {
-            message = <View><Text style={{fontSize: 20, fontWeight: '600', color:'red'}}>{errorPassword}</Text></View>
-        }
-        if (!checkPassword) {
+        if (checkPassword === undefined || (password !== undefined && password.length === 0)){
             message = null
+        } else if (checkPassword === false) {
+            message = <View style={{marginHorizontal: 28}}><Text style={{fontSize: 20, fontWeight: '600', color:'#6d1111'}}>{errorPassword}</Text></View>
         }
         return message
+    }
+    function displayLoginButton(){
+        let button
+        if (checkEmail === true && checkPassword === true){
+            button = <Button outline={true} text='Me connecter' touchEvent={() => 'lol'}/>
+        } else {
+            button = null
+        }
+        return button
     }
 
 
@@ -69,10 +75,31 @@ export default function Login({route, navigation}:LoginProps) {
             <Text style={styles.mainTitle}>Connexion</Text>
         </View>
         <View style={styles.inputBloc}>
-            <TextInput onBlur={(event) => setEmail(event.nativeEvent.text)} style={styles.textInput} placeholder='Entrez votre email' value={email} keyboardType='email-address' textContentType='emailAddress'/>
+
+            <CustomInput onBlur={() => checkField('email')} 
+                        onChangeText={(text)=> setEmail(text)} 
+                        placeholder='Entrez votre adresse mail' 
+                        value={email} keyboardType='email-address' 
+                        textContentType='emailAddress'/>
+
             {displayEmailMessage()}
-            <TextInput onBlur={(event) => setPassword(event.nativeEvent.text)} style={styles.textInput} placeholder='Entrez votre mot de passe' value={password} textContentType='password'/>
+            
+            <View style={styles.passwordContainer}>
+                <CustomInput onBlur={() => checkField('password')} 
+                            onChangeText={(text)=> setPassword(text)} 
+                            placeholder='Entrez votre mot de passe' 
+                            value={password} 
+                            textContentType='password'
+                            secureTextEntry = {hidePassword}
+                            />
+                <AntDesign onPress={() => setHidePassword(hidePassword ? false : true)} name="eye" size={24} color="black" style={styles.eyeIcon}/>
+            </View>
+
             {displayPasswordMessage()}
+
+            <View style={styles.buttonView}>
+                {displayLoginButton()}
+            </View>
         </View>
     </View>
   );
@@ -98,7 +125,7 @@ const styles = StyleSheet.create({
       },
       textInput:{
         paddingVertical: 15,
-        borderRadius: 4,
+        borderRadius: 8,
         borderColor: 'white',
         borderWidth: 1.2,
         width: 260,
@@ -109,5 +136,18 @@ const styles = StyleSheet.create({
     },
     inputBloc: {
         marginBottom: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    buttonView: {
+        marginTop: 29,
+    },
+    passwordContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 260,
+    },
+    eyeIcon: {
+        paddingLeft: 17,
     }
 })
