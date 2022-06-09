@@ -17,97 +17,87 @@ export default function Registration({route, navigation}:RegistrationProps){
     const [email, setEmail] = useState<string|undefined>()
     const [password, setPassword] = useState<string|undefined>()
     const [secondPassword, setSecondPassword] = useState<string|undefined>()
-
-    //States de vérifications des formats de données
-    const [checkEmail, setCheckEmail] = useState<boolean|undefined>()
-    const [checkPassword, setCheckpassword] = useState<boolean|undefined>()
+    
+    //Toggle de visibilité du mot de passe
     const [hidePassword, setHidePassword] = useState<boolean>(true)
 
+    //States de vérifications des formats de données
+    const [errorEmail, setErrorEmail] = useState<string|null>(null)
+    const [errorPassword, setErrorPassword] = useState<string|null>(null)
+
     //Messages d'erreurs
-    const errorEmail = 'Veuillez rentrer un adresse mail valide'
-    const errorPassword = 'Le mot de passe doit contenir au moins 8 huit caractères, dont une lettre, une majuscule, un chiffre et un caractère spécial.'
-    const notsamePassword = 'Vous n\'avez pas saisi le même mot de passe'
+    const emailMessage = 'Veuillez rentrer un adresse mail valide'
+    const passwordFormatMessage = 'Le mot de passe doit contenir au moins 8 huit caractères, dont une lettre, une majuscule, un chiffre et un caractère spécial.'
+    const secondPasswordMessage = 'Vous n\'avez pas saisi le même mot de passe'
 
     //Vérification des formats des données
-    function checkField(fieldName: string):void{
-        if (fieldName == 'email') {
-            if (email && email.length > 0) {
-                if (validator.isEmail(email)){
-                    setCheckEmail(true)
-                } else {
-                    setCheckEmail(false)
-                }
-            }
-        } else if (fieldName == 'password') {
-            if (password && password.length > 0) {
-                if (validator.isStrongPassword(password)){
-                    setCheckpassword(true)
-                } else {
-                    setCheckpassword(false)
-                }
-            }
+    function checkField(field: string):void {
+        if (email !== undefined && email.length > 0) {
+            if (!validator.isEmail(email)){
+                setErrorEmail(emailMessage)
+            } else {
+                setErrorEmail(null)
+            } 
+        }
+        if (password !== undefined && password.length > 0) {
+            if (!validator.isStrongPassword(password)){
+                setErrorPassword(passwordFormatMessage)
+                return
+            } else {
+                setErrorPassword(null)
+            } 
+        } 
+        if (secondPassword !== undefined && secondPassword.length > 0){
+            if (secondPassword !== password){
+                setErrorPassword(secondPasswordMessage)
+            } else {
+                setErrorPassword(null)
+            }  
         }
     }
 
-    //Fonctions d'affichage des messages d'erreur
-    function displayEmailMessage(){
-        let message
-        if (checkEmail === undefined || (email !== undefined && email.length === 0) || checkEmail === true){
-            message = null
-        } else if(checkEmail === false) {
-            message = <View><Text style={{fontSize: 20, fontWeight: '600', color:'#6d1111'}}>{errorEmail}</Text></View>
-        }
-        return message
-    }
-    function displayPasswordMessage(){
-        let message
-        if (checkPassword === undefined || (password !== undefined && password.length === 0) || (checkPassword === true && password === secondPassword)){
-            message = null
-        } else if (checkPassword === false) {
-            message = <View style={{marginHorizontal: 26, position: 'relative', top: 11}}><Text style={{fontSize: 17, fontWeight: '600', color:'#6d1111'}}>{errorPassword}</Text></View>
-        } else if (secondPassword !== undefined && secondPassword.length > 0 && password !== secondPassword){
-            message = <View style={{marginHorizontal: 28}}><Text style={{fontSize: 19, fontWeight: '600', color:'#6d1111'}}>{notsamePassword}</Text></View>
-        }
-        return message
-    }
 
     return (
         <View style={styles.container}>
             <View style={styles.mainTitleView}>
                 <Text style={styles.mainTitle}>Inscription</Text>
             </View>
-            <View style={styles.inputBloc}>
+            <View style={styles.inputContainer}>
+                <CustomInput onBlur={() => checkField('email')}
+                            onChangeText={(text)=> setEmail(text)}
+                            placeholder='Entrez votre adresse mail'
+                            value={email} 
+                            inputType = 'email'
+                            />
 
-                <CustomInput onBlur={() => checkField('email')} 
-                            onChangeText={(text)=> setEmail(text)} 
-                            placeholder='Entrez votre adresse mail' 
-                            value={email} keyboardType='email-address' 
-                            textContentType='emailAddress'/>
-
-                {displayEmailMessage()}
+                {
+                    errorEmail ? <View><Text style={{fontSize: 19, marginBottom: 12, marginTop: 9, fontWeight: '600', color:'#6d1111'}}>{errorEmail}</Text></View> : null    
+                }    
 
                 <View style={styles.passwordContainer}>
-                    <CustomInput onBlur={() => checkField('password')} 
-                                onChangeText={(text)=> setPassword(text)} 
-                                placeholder='Entrez votre mot de passe' 
-                                value={password} 
-                                textContentType='password'
+                    <CustomInput onBlur={() => checkField('password')}
+                                onChangeText={(text)=> setPassword(text)}
+                                placeholder='Entrez votre mot de passe'
+                                value={password}
                                 secureTextEntry = {hidePassword}
+                                inputType = 'password'
                                 />
                     <AntDesign onPress={() => setHidePassword(hidePassword ? false : true)} name="eye" size={24} color="black" style={styles.eyeIcon}/>
                 </View>
-                
                 <View style={styles.passwordContainer}>
-                    <CustomInput onChangeText={(text)=> setSecondPassword(text)} 
+                    <CustomInput onBlur={() => checkField('secondPassword')}
+                                onChangeText={(text)=> setSecondPassword(text)} 
                                 placeholder='Confirmez votre mot de passe' 
-                                value={secondPassword} 
-                                textContentType='password'
+                                value={secondPassword}
                                 secureTextEntry = {hidePassword}
+                                inputType = 'password'
                                 />
                     <AntDesign onPress={() => setHidePassword(hidePassword ? false : true)} name="eye" size={24} color="black" style={styles.eyeIcon}/>
                 </View>
 
-                {displayPasswordMessage()}
+                {
+                    errorPassword ? <View style={{marginHorizontal: 26, position: 'relative', top: 11}}><Text style={{fontSize: 17, fontWeight: '600', color:'#6d1111'}}>{errorPassword}</Text></View> : null
+                }
 
                 <View style={styles.buttonView}>
                     <TouchableOpacity style={styles.nextButton}>
@@ -138,7 +128,7 @@ const styles = StyleSheet.create({
         fontSize: 43,
         fontWeight: '500',
         color: 'white',
-        marginBottom: 65,
+        marginBottom: 60,
       },
       textInput:{
         paddingVertical: 15,
@@ -151,13 +141,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         fontSize: 17,
     },
-    inputBloc: {
-        marginBottom: 30,
+    inputContainer: {
+        marginBottom: 33,
         alignItems: 'center',
         justifyContent: 'center',
     },
     buttonView: {
-        marginTop: 40,
+        marginTop: 35,
         alignContent: 'center',
     },
     passwordContainer: {
