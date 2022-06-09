@@ -55,7 +55,13 @@ export default function Registration({route, navigation}:RegistrationProps){
             }  
         }
     }
-
+    
+    // Fonction de navigation
+    function confirmAndNavigate():void{
+        if (errorEmail == null && errorPassword == null && email !== undefined && password !== undefined){
+            navigation.navigate('Registration2', {email: email, password: password})
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -100,7 +106,7 @@ export default function Registration({route, navigation}:RegistrationProps){
                 }
 
                 <View style={styles.buttonView}>
-                    <TouchableOpacity style={styles.nextButton}>
+                    <TouchableOpacity style={styles.nextButton} onPress={() => confirmAndNavigate()}>
                         <Text style={styles.nextButtonText}>Suivant</Text> 
                         <MaterialIcons name="navigate-next" size={33} color="#F0F3BD" />
                     </TouchableOpacity>
@@ -109,8 +115,6 @@ export default function Registration({route, navigation}:RegistrationProps){
         </View>
     )
 }
-
-
 
 
 const styles = StyleSheet.create({

@@ -16,7 +16,7 @@ export default function Login({route, navigation}:LoginProps) {
     const [checkEmail, setCheckEmail] = useState<boolean|undefined>()
     const [checkPassword, setCheckpassword] = useState<boolean|undefined>()
     const [hidePassword, setHidePassword] = useState<boolean>(true)
-    
+
     const errorEmail = 'Veuillez rentrer un adresse mail valide'
     const errorPassword = 'Le mot de passe doit contenir au moins 8 huit caractères, dont une lettre, une majuscule, un chiffre et un caractère spécial'
 
@@ -75,28 +75,24 @@ export default function Login({route, navigation}:LoginProps) {
             <Text style={styles.mainTitle}>Connexion</Text>
         </View>
         <View style={styles.inputBloc}>
-
             <CustomInput onBlur={() => checkField('email')} 
                         onChangeText={(text)=> setEmail(text)} 
                         placeholder='Entrez votre adresse mail' 
-                        value={email} keyboardType='email-address' 
-                        textContentType='emailAddress'/>
-
+                        value={email}  
+                        inputType='email'
+                        />
             {displayEmailMessage()}
-            
             <View style={styles.passwordContainer}>
                 <CustomInput onBlur={() => checkField('password')} 
                             onChangeText={(text)=> setPassword(text)} 
                             placeholder='Entrez votre mot de passe' 
                             value={password} 
-                            textContentType='password'
                             secureTextEntry = {hidePassword}
+                            inputType='email'
                             />
                 <AntDesign onPress={() => setHidePassword(hidePassword ? false : true)} name="eye" size={24} color="black" style={styles.eyeIcon}/>
             </View>
-
             {displayPasswordMessage()}
-
             <View style={styles.buttonView}>
                 {displayLoginButton()}
             </View>

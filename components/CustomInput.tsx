@@ -12,7 +12,7 @@ type inputProps = {
 
 
 export default function CustomInput(props: inputProps) {
-  
+
   let keyboard: 'default' | 'email-address' | 'visible-password'
   let textContent: 'none' | 'emailAddress' | 'password'
 
@@ -41,7 +41,6 @@ export default function CustomInput(props: inputProps) {
               textContentType={textContent}
               secureTextEntry={props.secureTextEntry === undefined ? false : props.secureTextEntry}
               />
-
   );
 }
 
