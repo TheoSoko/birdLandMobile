@@ -36,6 +36,7 @@ export default function CustomInput(props: inputProps) {
               onChangeText={(text)=> props.onChangeText ? props.onChangeText(text) : null} 
               style={[styles.textInput]} 
               placeholder={props.placeholder} 
+              placeholderTextColor="#c4c4c4"
               value={props.value} 
               keyboardType={keyboard} 
               textContentType={textContent}

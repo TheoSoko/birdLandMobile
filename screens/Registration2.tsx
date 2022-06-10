@@ -9,11 +9,11 @@ import CustomInput from '../components/CustomInput'
 import CustomSelect from '../components/CustomSelect'
 import CustomDatePicker from '../components/CustomDatePicker'
 
-type RegistrationProps = NativeStackScreenProps<RootStackParamList, 'Registration'>
-
+type RegistrationProps = NativeStackScreenProps<RootStackParamList, 'Registration2'>
 
 
 export default function Registration({route, navigation}:RegistrationProps){
+
 
     //states des valeurs des champs
     const [firstName, setFirstName] = useState<string|undefined>()
@@ -26,7 +26,19 @@ export default function Registration({route, navigation}:RegistrationProps){
     const passwordFormatMessage = 'Le mot de passe doit contenir au moins 8 huit caractères, dont une lettre, une majuscule, un chiffre et un caractère spécial.'
     const secondPasswordMessage = 'Vous n\'avez pas saisi le même mot de passe'
 
-
+    //Navigation
+    function confirmAndNavigate():void{
+        if (firstName && lastName && civilStatus && birthDate){
+            navigation.navigate('SuccessRegistration', {
+                email: route.params.email,
+                password: route.params.password,
+                firstName: firstName,
+                lastName: lastName,
+                civilStatus: civilStatus,
+                birthDate: birthDate 
+                })
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -44,20 +56,20 @@ export default function Registration({route, navigation}:RegistrationProps){
                             onChangeText={(text)=> setFirstName(text)}
                             placeholder='Entrez votre Prénom'
                             value={firstName} 
-                            inputType = 'email'
+                            inputType='email'
                             />
 
                 <CustomInput onBlur={() => null}
                             onChangeText={(text)=> setLastName(text)}
                             placeholder='Entrez votre nom'
                             value={lastName}
-                            inputType = 'password'
+                            inputType='password'
                             />
-                
-                <View style={styles.datePicker}><CustomDatePicker/></View>
+            
+                <View><CustomDatePicker onDatePick={(date) => setBirthdate(date)}/></View>
 
                 <View style={styles.buttonView}>
-                    <TouchableOpacity style={styles.nextButton}>
+                    <TouchableOpacity style={styles.nextButton} onPress={() => confirmAndNavigate()}>
                         <Text style={styles.nextButtonText}>Terminer</Text> 
                         <MaterialIcons name="navigate-next" size={33} color="#F0F3BD" />
                     </TouchableOpacity>
@@ -133,7 +145,4 @@ const styles = StyleSheet.create({
         marginEnd: -4,
         color: '#F0F3BD',
     },
-    datePicker: {
-        marginVertical: 13,
-    }
 })
